@@ -108,7 +108,7 @@ If you require further assistance contact the support team @ [Discord](https://d
 ***Step 8***
 * Paste the code below into the Bitvise terminal then press enter
 
-`bash mn_setup.sh`
+`bash mn_install.sh`
 
 ![Bash](https://i.imgur.com/myvmKTE.png)
 
