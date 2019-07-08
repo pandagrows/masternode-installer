@@ -119,7 +119,7 @@ clear
 function copy_circuit_binaries(){
   cd /root
   wget $CIRCUIT_LATEST_RELEASE
-  unzip $CIRCUIT_LATEST_RELEASE
+  unzip `basename $CIRCUIT_LATEST_RELEASE`
   cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/circuit* >/dev/null
   clear
