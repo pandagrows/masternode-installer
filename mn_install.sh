@@ -117,9 +117,10 @@ clear
 }
 
 function copy_circuit_binaries(){
-  wget $CIRCUIT_LATEST_RELEASE >/dev/null
-  tar -xzf `basename $CIRCUIT_LATEST_RELEASE` --strip-components=2 >/dev/null
-  cp circuit-cli circuitd circuit-tx circuit-qt /usr/local/bin >/dev/null
+  cd /root
+  wget $CIRCUIT_LATEST_RELEASE
+  tar -xzf $CIRCUIT_LATEST_RELEASE
+  cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/circuit* >/dev/null
   clear
 }
