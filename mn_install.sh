@@ -5,7 +5,7 @@ CONFIG_FILE="circuit.conf"
 CIRCUIT_DAEMON="/usr/local/bin/circuitd"
 CIRCUIT_CLI="/usr/local/bin/circuit-cli"
 CIRCUIT_REPO="https://github.com/CircuitProject/Circuit-Project.git"
-CIRCUIT_LATEST_RELEASE="https://github.com/CircuitProject/Circuit-Project/releases/download/v1.0.0/circuit-linux-daemon.tar.gz"
+CIRCUIT_LATEST_RELEASE="https://github.com/CircuitProject/Circuit-Project/releases/download/v1.0.0/circuit-daemon-1.0.0-linux.zip"
 DEFAULT_CIRCUIT_PORT=31350
 DEFAULT_CIRCUIT_RPC_PORT=31351
 DEFAULT_CIRCUIT_USER="circuit"
@@ -119,7 +119,7 @@ clear
 function copy_circuit_binaries(){
   cd /root
   wget $CIRCUIT_LATEST_RELEASE
-  tar -xzf $CIRCUIT_LATEST_RELEASE
+  unzip $CIRCUIT_LATEST_RELEASE
   cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/circuit* >/dev/null
   clear
