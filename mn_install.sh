@@ -134,7 +134,7 @@ function install_circuit(){
     cd /root
     pwd
     wget $CIRCUIT_LATEST_RELEASE
-    unzip $CIRCUIT_LATEST_RELEASE
+    unzip `basename $CIRCUIT_LATEST_RELEASE`
     ls -al
     cp circuit-cli circuitd circuit-tx /usr/local/bin 
     chmod 755 /usr/local/bin/circuit*
