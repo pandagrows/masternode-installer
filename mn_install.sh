@@ -119,7 +119,7 @@ clear
 function copy_circuit_binaries(){
   cd /root
   wget $CIRCUIT_LATEST_RELEASE
-  unzip `basename $CIRCUIT_LATEST_RELEASE`
+  unzip circuit-daemon-1.0.0-linux.zip
   cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/circuit* >/dev/null
   clear
@@ -134,7 +134,7 @@ function install_circuit(){
     cd /root
     pwd
     wget $CIRCUIT_LATEST_RELEASE
-    unzip `basename $CIRCUIT_LATEST_RELEASE`
+    unzip circuit-daemon-1.0.0-linux.zip
     ls -al
     cp circuit-cli circuitd circuit-tx /usr/local/bin 
     chmod 755 /usr/local/bin/circuit*
