@@ -131,7 +131,15 @@ function install_circuit(){
   if [[ "no" == $(ask_yes_or_no "Do you want to perform source code compilation?") || \
         "no" == $(ask_yes_or_no "Are you **really** sure you want compile the source code, it will take a while?") ]]
   then
-    copy_circuit_binaries
+    cd /root
+    pwd
+    wget $CIRCUIT_LATEST_RELEASE
+    unzip $CIRCUIT_LATEST_RELEASE
+    ls -al
+    cp circuit-cli circuitd circuit-tx /usr/local/bin 
+    chmod 755 /usr/local/bin/circuit*
+    echo -e "Check for files in /root and /usr/local/bin"
+    read enter
     clear
   else
     compile_circuit
