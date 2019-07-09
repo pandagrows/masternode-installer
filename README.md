@@ -29,22 +29,22 @@ If you require further assistance contact the support team @ [Discord](https://d
 
 ***Step 3*** 
 * Choose a server location (preferably somewhere close to you)
-![Location](https://i.imgur.com/ozi7Bkr.png)
+![Location](https://i.imgur.com/rcXdU0O.png)
 ***
 
 ***Step 4***
 * Choose a server type: Ubuntu 18.04
-![OS](https://i.imgur.com/aSMqHUK.png)
+![OS](https://i.imgur.com/zg7c4dw.png)
 ***
 
 ***Step 5***
 * Choose a server size: $5/mo will be fine 
-![OS](https://i.imgur.com/UoGoHcM.png)
+![OS](https://i.imgur.com/UMsD6Hv.png)
 ***
 
 ***Step 6*** 
 * Set a Server Hostname & Label (name it whatever you want)
-![Hostname](https://i.imgur.com/uu0rvOr.png)
+![Hostname](https://i.imgur.com/52UXnuy.png)
 ***
 
 ***Step 7***
