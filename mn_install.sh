@@ -99,9 +99,6 @@ else
   echo -e "${GREEN}Server running with at least 4G of RAM, no swap needed.${NC}"
 fi
 clear
-
-
-
   echo -e "Clone git repo and compile it. This may take some time."
   cd $TMP_FOLDER
   git clone $CIRCUIT_REPO circuit
