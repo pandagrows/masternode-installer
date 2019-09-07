@@ -18,6 +18,21 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+purgeOldInstallation() {
+    echo -e "${GREEN}Searching and removing old $COIN_NAME Daemon{NC}"
+    #kill wallet daemon
+	systemctl stop $CIRCUIT_USER.service
+	
+	#Clean block chain for Bootstrap Update
+    cd $CONFIGFOLDER >/dev/null 2>&1
+    rm -rf *.pid *.lock database sporks chainstate zerocoin blocks >/dev/null 2>&1
+	
+    #remove binaries and Circuit utilities
+    cd /usr/local/bin && sudo rm circuit-cli circuit-tx circuitd > /dev/null 2>&1 && cd
+    echo -e "${GREEN}* Done${NONE}";
+}
+
+
 function download_bootstrap() {
   echo -e "${GREEN}Downloading and Installing $COIN_NAME BootStrap${NC}"
   mkdir -p /root/tmp
@@ -33,21 +48,6 @@ function download_bootstrap() {
   rm -rf $TMP_FOLDER >/dev/null 2>&1
   clear
 }
-
-purgeOldInstallation() {
-    echo -e "${GREEN}Searching and removing old $COIN_NAME Daemon{NC}"
-    #kill wallet daemon
-	systemctl stop $CIRCUIT_USER.service
-	
-	#Clean block chain for Bootstrap Update
-    cd $CONFIGFOLDER >/dev/null 2>&1
-    rm -rf *.pid *.lock database sporks chainstate zerocoin blocks >/dev/null 2>&1
-	
-    #remove binaries and Circuit utilities
-    cd /usr/local/bin && sudo rm circuit-cli circuit-tx circuitd > /dev/null 2>&1 && cd
-    echo -e "${GREEN}* Done${NONE}";
-}
-
 
 function compile_error() {
 if [ "$?" -gt "0" ];
@@ -211,92 +211,6 @@ EOF
   fi
 }
 
-function ask_port() {
-read -p "CIRCUIT Port: " -i $DEFAULT_CIRCUIT_PORT -e CIRCUIT_PORT
-: ${CIRCUIT_PORT:=$DEFAULT_CIRCUIT_PORT}
-}
-
-function ask_user() {
-  echo -e "${GREEN}The script will now setup Circuit user and configuration directory. Press ENTER to accept defaults values.${NC}"
-  read -p "Circuit user: " -i $DEFAULT_CIRCUIT_USER -e CIRCUIT_USER
-  : ${CIRCUIT_USER:=$DEFAULT_CIRCUIT_USER}
-
-  if [ -z "$(getent passwd $CIRCUIT_USER)" ]; then
-    USERPASS=$(pwgen -s 12 1)
-    useradd -m $CIRCUIT_USER
-    echo "$CIRCUIT_USER:$USERPASS" | chpasswd
-
-    CIRCUIT_HOME=$(sudo -H -u $CIRCUIT_USER bash -c 'echo $HOME')
-    DEFAULT_CIRCUIT_FOLDER="$CIRCUIT_HOME/.circuit"
-    read -p "Configuration folder: " -i $DEFAULT_CIRCUIT_FOLDER -e CIRCUIT_FOLDER
-    : ${CIRCUIT_FOLDER:=$DEFAULT_CIRCUIT_FOLDER}
-    mkdir -p $CIRCUIT_FOLDER
-    chown -R $CIRCUIT_USER: $CIRCUIT_FOLDER >/dev/null
-  else
-    clear
-    echo -e "${RED}User exits. Please enter another username: ${NC}"
-    ask_user
-  fi
-}
-
-function check_port() {
-  declare -a PORTS
-  PORTS=($(netstat -tnlp | awk '/LISTEN/ {print $4}' | awk -F":" '{print $NF}' | sort | uniq | tr '\r\n'  ' '))
-  ask_port
-
-  while [[ ${PORTS[@]} =~ $CIRCUIT_PORT ]] || [[ ${PORTS[@]} =~ $[CIRCUIT_PORT+1] ]]; do
-    clear
-    echo -e "${RED}Port in use, please choose another port:${NF}"
-    ask_port
-  done
-}
-
-function create_config() {
-  RPCUSER=$(pwgen -s 8 1)
-  RPCPASSWORD=$(pwgen -s 15 1)
-  cat << EOF > $CIRCUIT_FOLDER/$CONFIG_FILE
-rpcuser=$RPCUSER
-rpcpassword=$RPCPASSWORD
-rpcallowip=127.0.0.1
-rpcport=$DEFAULT_CIRCUIT_RPC_PORT
-listen=1
-server=1
-daemon=1
-port=$CIRCUIT_PORT
-addnode=208.95.3.232:31350
-addnode=208.95.3.233:31350
-addnode=208.95.3.234:31350
-addnode=208.95.3.239:31350
-addnode=185.239.239.75:31350
-addnode=92.60.44.117:31350
-EOF
-}
-
-function create_key() {
-  echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
-  read -e CIRCUIT_KEY
-  if [[ -z "$CIRCUIT_KEY" ]]; then
-  su $CIRCUIT_USER -c "$CIRCUIT_DAEMON -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER -daemon"
-  sleep 15
-  if [ -z "$(ps axo user:15,cmd:100 | egrep ^$CIRCUIT_USER | grep $CIRCUIT_DAEMON)" ]; then
-   echo -e "${RED}Circuitd server couldn't start. Check /var/log/syslog for errors.{$NC}"
-   exit 1
-  fi
-  CIRCUIT_KEY=$(su $CIRCUIT_USER -c "$CIRCUIT_CLI -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER createmasternodekey")
-  su $CIRCUIT_USER -c "$CIRCUIT_CLI -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER stop"
-fi
-}
-
-function update_config() {
-  sed -i 's/daemon=1/daemon=0/' $CIRCUIT_FOLDER/$CONFIG_FILE
-  cat << EOF >> $CIRCUIT_FOLDER/$CONFIG_FILE
-maxconnections=256
-masternode=1
-masternodeaddr=$NODE_IP:$CIRCUIT_PORT
-masternodeprivkey=$CIRCUIT_KEY
-EOF
-  chown -R $CIRCUIT_USER: $CIRCUIT_FOLDER >/dev/null
-}
 
 function important_information() {
  echo
@@ -313,15 +227,10 @@ function important_information() {
 }
 
 function setup_node() {
-  ask_user
-  check_port
-  create_config
-  create_key
-  update_config
-  enable_firewall
-  download_bootstrap
-  systemd_circuit
-  important_information
+	download_bootstrap
+	enable_firewall
+	systemd_circuit
+	important_information
 }
 
 
@@ -329,6 +238,5 @@ function setup_node() {
 clear
 purgeOldInstallation
 checks
-prepare_system
 install_circuit
 setup_node
