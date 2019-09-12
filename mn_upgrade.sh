@@ -40,7 +40,7 @@ function download_bootstrap() {
   rm -rf boot_strap* >/dev/null 2>&1
   wget -q $COIN_BOOTSTRAP
   cd $CONFIGFOLDER >/dev/null 2>&1
-  rm -rf blk* database* txindex* peers.dat
+  rm -rf *.pid *.lock database sporks chainstate zerocoin blocks >/dev/null 2>&1
   cd /root/tmp >/dev/null 2>&1
   tar -zxf $COIN_CHAIN /root/tmp >/dev/null 2>&1
   cp -Rv cache/* $CONFIGFOLDER >/dev/null 2>&1
