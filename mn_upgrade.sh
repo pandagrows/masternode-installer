@@ -77,20 +77,9 @@ if [ -n "$(pidof $CIRCUIT_DAEMON)" ] || [ -e "$CIRCUIT_DAEMON" ] ; then
 fi
 }
 
-function prepare_system() {
-}
-
-function ask_yes_or_no() {
-  read -p "$1 ([Y]es or [N]o | ENTER): "
-    case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
-        y|yes) echo "yes" ;;
-        *)     echo "no" ;;
-    esac
-}
-
 
 function copy_circuit_binaries(){
-   cd /root
+  cd /root
   wget $CIRCUIT_LATEST_RELEASE
   unzip circuit-1.0.2-linux-daemon.zip
   cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
