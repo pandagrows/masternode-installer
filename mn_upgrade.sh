@@ -82,7 +82,7 @@ fi
 function copy_circuit_binaries(){
   cd /root
   wget $CIRCUIT_LATEST_RELEASE
-  unzip circuit-1.0.3-ubuntu1804-daemon.zip
+  unzip circuit-1.0.5-ubuntu1804-daemon.zip
   cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/circuit* >/dev/null
   clear
