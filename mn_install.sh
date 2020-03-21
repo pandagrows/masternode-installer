@@ -5,7 +5,7 @@ CONFIG_FILE="circuit.conf"
 CIRCUIT_DAEMON="/usr/local/bin/circuitd"
 CIRCUIT_CLI="/usr/local/bin/circuit-cli"
 CIRCUIT_REPO="https://github.com/CircuitProject/Circuit-Project.git"
-CIRCUIT_LATEST_RELEASE="https://github.com/CircuitProject/Circuit-Project/releases/download/v1.0.5/circuit-1.0.5-ubuntu1804-daemon.zip"
+CIRCUIT_LATEST_RELEASE="https://github.com/CircuitProject/Circuit-Project/releases/download/v2.0.0/circuit-2.0.0-ubuntu1804-daemon.zip"
 COIN_BOOTSTRAP='https://bootstrap.circuit-society.io/boot_strap.tar.gz'
 COIN_ZIP=$(echo $CIRCUIT_LATEST_RELEASE | awk -F'/' '{print $NF}')
 COIN_CHAIN=$(echo $COIN_BOOTSTRAP | awk -F'/' '{print $NF}')
@@ -151,7 +151,7 @@ clear
 function copy_circuit_binaries(){
    cd /root
   wget $CIRCUIT_LATEST_RELEASE
-  unzip circuit-1.0.5-ubuntu1804-daemon.zip
+  unzip  circuit-2.0.0-ubuntu1804-daemon.zip
   cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/circuit* >/dev/null
   clear
@@ -264,12 +264,35 @@ listen=1
 server=1
 daemon=1
 port=$CIRCUIT_PORT
+addnode=208.95.3.227:31350
+addnode=208.95.3.228:31350
+addnode=208.95.3.229:31350
+addnode=208.95.3.230:31350
+addnode=208.95.3.231:31350
 addnode=208.95.3.232:31350
 addnode=208.95.3.233:31350
 addnode=208.95.3.234:31350
+addnode=208.95.3.235:31350
+addnode=208.95.3.236:31350
+addnode=208.95.3.237:31350
+addnode=208.95.3.238:31350
 addnode=208.95.3.239:31350
-addnode=185.239.239.75:31350
-addnode=92.60.44.117:31350
+addnode=162.247.131.30:31350
+addnode=162.247.131.31:31350
+addnode=162.247.131.32:31350
+addnode=162.247.131.33:31350
+addnode=162.247.131.34:31350
+addnode=162.247.131.35:31350
+addnode=162.247.131.36:31350
+addnode=162.247.131.37:31350
+addnode=162.247.131.38:31350
+addnode=162.247.131.39:31350
+addnode=162.247.131.40:31350
+addnode=162.247.131.41:31350
+addnode=162.247.131.42:31350
+addnode=162.247.131.43:31350
+addnode=162.247.131.44:31350
+addnode=208.95.2.29:31350
 EOF
 }
 
