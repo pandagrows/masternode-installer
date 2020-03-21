@@ -5,7 +5,7 @@ CONFIG_FILE="circuit.conf"
 CIRCUIT_DAEMON="/usr/local/bin/circuitd"
 CIRCUIT_CLI="/usr/local/bin/circuit-cli"
 CIRCUIT_REPO="https://github.com/CircuitProject/Circuit-Project.git"
-CIRCUIT_LATEST_RELEASE="https://github.com/CircuitProject/Circuit-Project/releases/download/v1.0.5/circuit-1.0.5-ubuntu1804-daemon.zip"
+CIRCUIT_LATEST_RELEASE="https://github.com/CircuitProject/Circuit-Project/releases/download/v2.0.0/circuit-2.0.0-ubuntu1804-daemon.zip"
 COIN_BOOTSTRAP='https://bootstrap.circuit-society.io/boot_strap.tar.gz'
 COIN_ZIP=$(echo $CIRCUIT_LATEST_RELEASE | awk -F'/' '{print $NF}')
 COIN_CHAIN=$(echo $COIN_BOOTSTRAP | awk -F'/' '{print $NF}')
@@ -82,7 +82,7 @@ fi
 function copy_circuit_binaries(){
   cd /root
   wget $CIRCUIT_LATEST_RELEASE
-  unzip circuit-1.0.5-ubuntu1804-daemon.zip
+  unzip circuit-2.0.0-ubuntu1804-daemon.zip
   cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/circuit* >/dev/null
   clear
