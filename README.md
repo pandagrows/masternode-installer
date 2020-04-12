@@ -1,4 +1,4 @@
-![Coin-Logo](https://github.com/pandagrows/seed2need-farm-coin/blob/master/share/pixmaps/seed2need32.png)
+![Coin-Logo](https://github.com/pandagrows/seed2need-farm-coin/blob/master/share/pixmaps/seed2need256.png)
 # Seed2need Masternode Setup Guide (Ubuntu 18.04)
 This guide will assist you in setting up a Seed2need Masternode on a Linux Server running Ubuntu 18.04. (Use at your own risk)
 
