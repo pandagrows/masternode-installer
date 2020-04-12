@@ -5,8 +5,8 @@ CONFIG_FILE="seed2need.conf"
 SEED2NEED_DAEMON="/usr/local/bin/seed2needd"
 SEED2NEED_CLI="/usr/local/bin/seed2need-cli"
 SEED2NEED_REPO="https://github.com/pandagrows/seed2need-farm-coin.git"
-SEED2NEED_LATEST_RELEASE="https://github.com/pandagrows/seed2need-farm-coin/releases/download/v1.0.0/seed2need-1.0.0-win64-daemon.zip"
-COIN_BOOTSTRAP='https://bootstrap.seed2need.me/boot_strap.tar.gz'
+SEED2NEED_LATEST_RELEASE="https://github.com/pandagrows/seed2need-farm-coin/releases/download/v1.0.0/seed2need-1.0.0-ubuntu-18.04-daemon.zip"
+COIN_BOOTSTRAP='https://bootstrap.seed2need.me/farm_boot_strap.tar.gz'
 COIN_ZIP=$(echo $SEED2NEED_LATEST_RELEASE | awk -F'/' '{print $NF}')
 COIN_CHAIN=$(echo $COIN_BOOTSTRAP | awk -F'/' '{print $NF}')
 
@@ -151,7 +151,7 @@ clear
 function copy_seed2need_binaries(){
    cd /root
   wget $SEED2NEED_LATEST_RELEASE
-  unzip  seed2need-2.0.0-ubuntu1804-daemon.zip
+  unzip seed2need-1.0.0-ubuntu-18.04-daemon.zip
   cp seed2need-cli seed2needd seed2need-tx /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/seed2need* >/dev/null
   clear
