@@ -1,19 +1,19 @@
 #!/bin/bash
 
 TMP_FOLDER=$(mktemp -d)
-CONFIG_FILE="circuit.conf"
-CIRCUIT_DAEMON="/usr/local/bin/circuitd"
-CIRCUIT_CLI="/usr/local/bin/circuit-cli"
-CIRCUIT_REPO="https://github.com/CircuitProject/Circuit-Project.git"
-CIRCUIT_LATEST_RELEASE="https://github.com/CircuitProject/Circuit-Project/releases/download/v2.0.0/circuit-2.0.0-ubuntu1804-daemon.zip"
-COIN_BOOTSTRAP='https://bootstrap.circuit-society.io/boot_strap.tar.gz'
-COIN_ZIP=$(echo $CIRCUIT_LATEST_RELEASE | awk -F'/' '{print $NF}')
+CONFIG_FILE="seed2need.conf"
+SEED2NEED_DAEMON="/usr/local/bin/seed2needd"
+SEED2NEED_CLI="/usr/local/bin/seed2need-cli"
+SEED2NEED_REPO="https://github.com/pandagrows/seed2need-farm-coin.git"
+SEED2NEED_LATEST_RELEASE="https://github.com/pandagrows/seed2need-farm-coin/releases/download/v1.0.0/seed2need-1.0.0-win64-daemon.zip"
+COIN_BOOTSTRAP='https://bootstrap.seed2need.me/boot_strap.tar.gz'
+COIN_ZIP=$(echo $SEED2NEED_LATEST_RELEASE | awk -F'/' '{print $NF}')
 COIN_CHAIN=$(echo $COIN_BOOTSTRAP | awk -F'/' '{print $NF}')
 
-DEFAULT_CIRCUIT_PORT=31350
-DEFAULT_CIRCUIT_RPC_PORT=31351
-DEFAULT_CIRCUIT_USER="circuit"
-CIRCUIT_USER="circuit"
+DEFAULT_SEED2NEED_PORT=2020
+DEFAULT_SEED2NEED_RPC_PORT=2021
+DEFAULT_SEED2NEED_USER="seed2need"
+SEED2NEED_USER="seed2need"
 NODE_IP=NotCheckedYet
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -38,14 +38,14 @@ function download_bootstrap() {
 purgeOldInstallation() {
     echo -e "${GREEN}Searching and removing old $COIN_NAME Daemon{NC}"
     #kill wallet daemon
-	systemctl stop $CIRCUIT_USER.service
+	systemctl stop $SEED2NEED_USER.service
 	
 	#Clean block chain for Bootstrap Update
     cd $CONFIGFOLDER >/dev/null 2>&1
     rm -rf *.pid *.lock database sporks chainstate zerocoin blocks >/dev/null 2>&1
 	
-    #remove binaries and Circuit utilities
-    cd /usr/local/bin && sudo rm circuit-cli circuit-tx circuitd > /dev/null 2>&1 && cd
+    #remove binaries and Seed2need utilities
+    cd /usr/local/bin && sudo rm seed2need-cli seed2need-tx seed2needd > /dev/null 2>&1 && cd
     echo -e "${GREEN}* Done${NONE}";
 }
 
@@ -70,9 +70,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ -n "$(pidof $CIRCUIT_DAEMON)" ] || [ -e "$CIRCUIT_DAEMON" ] ; then
+if [ -n "$(pidof $SEED2NEED_DAEMON)" ] || [ -e "$SEED2NEED_DAEMON" ] ; then
   echo -e "${GREEN}\c"
-  echo -e "Circuit is already installed. Exiting..."
+  echo -e "Seed2need is already installed. Exiting..."
   echo -e "{NC}"
   exit 1
 fi
@@ -80,7 +80,7 @@ fi
 
 function prepare_system() {
 
-echo -e "Prepare the system to install Circuit master node."
+echo -e "Prepare the system to install Seed2need master node."
 apt-get update >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
@@ -116,7 +116,7 @@ function ask_yes_or_no() {
     esac
 }
 
-function compile_circuit() {
+function compile_seed2need() {
 echo -e "Checking if swap space is needed."
 PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 SWAP=$(free -g|awk '/^Swap:/{print $2}')
@@ -136,44 +136,44 @@ fi
 clear
   echo -e "Clone git repo and compile it. This may take some time."
   cd $TMP_FOLDER
-  git clone $CIRCUIT_REPO circuit
-  cd circuit
+  git clone $SEED2NEED_REPO seed2need
+  cd seed2need
   ./autogen.sh
   ./configure
   make
-  strip src/circuitd src/circuit-cli src/circuit-tx
+  strip src/seed2needd src/seed2need-cli src/seed2need-tx
   make install
   cd ~
   rm -rf $TMP_FOLDER
   clear
 }
 
-function copy_circuit_binaries(){
+function copy_seed2need_binaries(){
    cd /root
-  wget $CIRCUIT_LATEST_RELEASE
-  unzip  circuit-2.0.0-ubuntu1804-daemon.zip
-  cp circuit-cli circuitd circuit-tx /usr/local/bin >/dev/null
-  chmod 755 /usr/local/bin/circuit* >/dev/null
+  wget $SEED2NEED_LATEST_RELEASE
+  unzip  seed2need-2.0.0-ubuntu1804-daemon.zip
+  cp seed2need-cli seed2needd seed2need-tx /usr/local/bin >/dev/null
+  chmod 755 /usr/local/bin/seed2need* >/dev/null
   clear
 }
 
-function install_circuit(){
-  echo -e "Installing Circuit files."
+function install_seed2need(){
+  echo -e "Installing Seed2need files."
   echo -e "${GREEN}You have the choice between source code compilation (slower and requries 4G of RAM or VPS that allows swap to be added), or to use precompiled binaries instead (faster).${NC}"
   if [[ "no" == $(ask_yes_or_no "Do you want to perform source code compilation?") || \
         "no" == $(ask_yes_or_no "Are you **really** sure you want compile the source code, it will take a while?") ]]
   then
-    copy_circuit_binaries
+    copy_seed2need_binaries
     clear
   else
-    compile_circuit
+    compile_seed2need
     clear
   fi
 }
 
 function enable_firewall() {
-  echo -e "Installing fail2ban and setting up firewall to allow ingress on port ${GREEN}$CIRCUIT_PORT${NC}"
-  ufw allow $CIRCUIT_PORT/tcp comment "Circuit MN port" >/dev/null
+  echo -e "Installing fail2ban and setting up firewall to allow ingress on port ${GREEN}$SEED2NEED_PORT${NC}"
+  ufw allow $SEED2NEED_PORT/tcp comment "Seed2need MN port" >/dev/null
   ufw allow ssh comment "SSH" >/dev/null 2>&1
   ufw limit ssh/tcp >/dev/null 2>&1
   ufw default allow outgoing >/dev/null 2>&1
@@ -182,17 +182,17 @@ function enable_firewall() {
   systemctl start fail2ban >/dev/null 2>&1
 }
 
-function systemd_circuit() {
-  cat << EOF > /etc/systemd/system/$CIRCUIT_USER.service
+function systemd_seed2need() {
+  cat << EOF > /etc/systemd/system/$SEED2NEED_USER.service
 [Unit]
-Description=Circuit service
+Description=Seed2need service
 After=network.target
 [Service]
-ExecStart=$CIRCUIT_DAEMON -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER
-ExecStop=$CIRCUIT_CLI -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER stop
+ExecStart=$SEED2NEED_DAEMON -conf=$SEED2NEED_FOLDER/$CONFIG_FILE -datadir=$SEED2NEED_FOLDER
+ExecStop=$SEED2NEED_CLI -conf=$SEED2NEED_FOLDER/$CONFIG_FILE -datadir=$SEED2NEED_FOLDER stop
 Restart=always
-User=$CIRCUIT_USER
-Group=$CIRCUIT_USER
+User=$SEED2NEED_USER
+Group=$SEED2NEED_USER
 
 [Install]
 WantedBy=multi-user.target
@@ -200,39 +200,39 @@ EOF
 
   systemctl daemon-reload
   sleep 3
-  systemctl start $CIRCUIT_USER.service
-  systemctl enable $CIRCUIT_USER.service
+  systemctl start $SEED2NEED_USER.service
+  systemctl enable $SEED2NEED_USER.service
 
-  if [[ -z "$(ps axo user:15,cmd:100 | egrep ^$CIRCUIT_USER | grep $CIRCUIT_DAEMON)" ]]; then
-    echo -e "${RED}circuitd is not running${NC}, please investigate. You should start by running the following commands as root:"
-    echo -e "${GREEN}systemctl start $CIRCUIT_USER.service"
-    echo -e "systemctl status $CIRCUIT_USER.service"
+  if [[ -z "$(ps axo user:15,cmd:100 | egrep ^$SEED2NEED_USER | grep $SEED2NEED_DAEMON)" ]]; then
+    echo -e "${RED}seed2needd is not running${NC}, please investigate. You should start by running the following commands as root:"
+    echo -e "${GREEN}systemctl start $SEED2NEED_USER.service"
+    echo -e "systemctl status $SEED2NEED_USER.service"
     echo -e "less /var/log/syslog${NC}"
     exit 1
   fi
 }
 
 function ask_port() {
-read -p "CIRCUIT Port: " -i $DEFAULT_CIRCUIT_PORT -e CIRCUIT_PORT
-: ${CIRCUIT_PORT:=$DEFAULT_CIRCUIT_PORT}
+read -p "SEED2NEED Port: " -i $DEFAULT_SEED2NEED_PORT -e SEED2NEED_PORT
+: ${SEED2NEED_PORT:=$DEFAULT_SEED2NEED_PORT}
 }
 
 function ask_user() {
-  echo -e "${GREEN}The script will now setup Circuit user and configuration directory. Press ENTER to accept defaults values.${NC}"
-  read -p "Circuit user: " -i $DEFAULT_CIRCUIT_USER -e CIRCUIT_USER
-  : ${CIRCUIT_USER:=$DEFAULT_CIRCUIT_USER}
+  echo -e "${GREEN}The script will now setup Seed2need user and configuration directory. Press ENTER to accept defaults values.${NC}"
+  read -p "Seed2need user: " -i $DEFAULT_SEED2NEED_USER -e SEED2NEED_USER
+  : ${SEED2NEED_USER:=$DEFAULT_SEED2NEED_USER}
 
-  if [ -z "$(getent passwd $CIRCUIT_USER)" ]; then
+  if [ -z "$(getent passwd $SEED2NEED_USER)" ]; then
     USERPASS=$(pwgen -s 12 1)
-    useradd -m $CIRCUIT_USER
-    echo "$CIRCUIT_USER:$USERPASS" | chpasswd
+    useradd -m $SEED2NEED_USER
+    echo "$SEED2NEED_USER:$USERPASS" | chpasswd
 
-    CIRCUIT_HOME=$(sudo -H -u $CIRCUIT_USER bash -c 'echo $HOME')
-    DEFAULT_CIRCUIT_FOLDER="$CIRCUIT_HOME/.circuit"
-    read -p "Configuration folder: " -i $DEFAULT_CIRCUIT_FOLDER -e CIRCUIT_FOLDER
-    : ${CIRCUIT_FOLDER:=$DEFAULT_CIRCUIT_FOLDER}
-    mkdir -p $CIRCUIT_FOLDER
-    chown -R $CIRCUIT_USER: $CIRCUIT_FOLDER >/dev/null
+    SEED2NEED_HOME=$(sudo -H -u $SEED2NEED_USER bash -c 'echo $HOME')
+    DEFAULT_SEED2NEED_FOLDER="$SEED2NEED_HOME/.seed2need"
+    read -p "Configuration folder: " -i $DEFAULT_SEED2NEED_FOLDER -e SEED2NEED_FOLDER
+    : ${SEED2NEED_FOLDER:=$DEFAULT_SEED2NEED_FOLDER}
+    mkdir -p $SEED2NEED_FOLDER
+    chown -R $SEED2NEED_USER: $SEED2NEED_FOLDER >/dev/null
   else
     clear
     echo -e "${RED}User exits. Please enter another username: ${NC}"
@@ -245,7 +245,7 @@ function check_port() {
   PORTS=($(netstat -tnlp | awk '/LISTEN/ {print $4}' | awk -F":" '{print $NF}' | sort | uniq | tr '\r\n'  ' '))
   ask_port
 
-  while [[ ${PORTS[@]} =~ $CIRCUIT_PORT ]] || [[ ${PORTS[@]} =~ $[CIRCUIT_PORT+1] ]]; do
+  while [[ ${PORTS[@]} =~ $SEED2NEED_PORT ]] || [[ ${PORTS[@]} =~ $[SEED2NEED_PORT+1] ]]; do
     clear
     echo -e "${RED}Port in use, please choose another port:${NF}"
     ask_port
@@ -255,84 +255,69 @@ function check_port() {
 function create_config() {
   RPCUSER=$(pwgen -s 8 1)
   RPCPASSWORD=$(pwgen -s 15 1)
-  cat << EOF > $CIRCUIT_FOLDER/$CONFIG_FILE
+  cat << EOF > $SEED2NEED_FOLDER/$CONFIG_FILE
 rpcuser=$RPCUSER
 rpcpassword=$RPCPASSWORD
 rpcallowip=127.0.0.1
-rpcport=$DEFAULT_CIRCUIT_RPC_PORT
+rpcport=$DEFAULT_SEED2NEED_RPC_PORT
 listen=1
 server=1
 daemon=1
-port=$CIRCUIT_PORT
-addnode=208.95.3.227:31350
-addnode=208.95.3.228:31350
-addnode=208.95.3.229:31350
-addnode=208.95.3.230:31350
-addnode=208.95.3.231:31350
-addnode=208.95.3.232:31350
-addnode=208.95.3.233:31350
-addnode=208.95.3.234:31350
-addnode=208.95.3.235:31350
-addnode=208.95.3.236:31350
-addnode=208.95.3.237:31350
-addnode=208.95.3.238:31350
-addnode=208.95.3.239:31350
-addnode=162.247.131.30:31350
-addnode=162.247.131.31:31350
-addnode=162.247.131.32:31350
-addnode=162.247.131.33:31350
-addnode=162.247.131.34:31350
-addnode=162.247.131.35:31350
-addnode=162.247.131.36:31350
-addnode=162.247.131.37:31350
-addnode=162.247.131.38:31350
-addnode=162.247.131.39:31350
-addnode=162.247.131.40:31350
-addnode=162.247.131.41:31350
-addnode=162.247.131.42:31350
-addnode=162.247.131.43:31350
-addnode=162.247.131.44:31350
-addnode=208.95.2.29:31350
+port=$SEED2NEED_PORT
+addnode=208.95.3.227:2020
+addnode=208.95.3.228:2020
+addnode=208.95.3.229:2020
+addnode=208.95.3.230:2020
+addnode=208.95.3.231:2020
+addnode=208.95.3.232:2020
+addnode=208.95.3.233:2020
+addnode=208.95.3.234:2020
+addnode=208.95.3.235:2020
+addnode=208.95.3.236:2020
+addnode=208.95.3.237:2020
+addnode=208.95.3.238:2020
+addnode=208.95.3.239:2020
+
 EOF
 }
 
 function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
-  read -e CIRCUIT_KEY
-  if [[ -z "$CIRCUIT_KEY" ]]; then
-  su $CIRCUIT_USER -c "$CIRCUIT_DAEMON -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER -daemon"
+  read -e SEED2NEED_KEY
+  if [[ -z "$SEED2NEED_KEY" ]]; then
+  su $SEED2NEED_USER -c "$SEED2NEED_DAEMON -conf=$SEED2NEED_FOLDER/$CONFIG_FILE -datadir=$SEED2NEED_FOLDER -daemon"
   sleep 15
-  if [ -z "$(ps axo user:15,cmd:100 | egrep ^$CIRCUIT_USER | grep $CIRCUIT_DAEMON)" ]; then
-   echo -e "${RED}Circuitd server couldn't start. Check /var/log/syslog for errors.{$NC}"
+  if [ -z "$(ps axo user:15,cmd:100 | egrep ^$SEED2NEED_USER | grep $SEED2NEED_DAEMON)" ]; then
+   echo -e "${RED}Seed2needd server couldn't start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
-  CIRCUIT_KEY=$(su $CIRCUIT_USER -c "$CIRCUIT_CLI -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER createmasternodekey")
-  su $CIRCUIT_USER -c "$CIRCUIT_CLI -conf=$CIRCUIT_FOLDER/$CONFIG_FILE -datadir=$CIRCUIT_FOLDER stop"
+  SEED2NEED_KEY=$(su $SEED2NEED_USER -c "$SEED2NEED_CLI -conf=$SEED2NEED_FOLDER/$CONFIG_FILE -datadir=$SEED2NEED_FOLDER createmasternodekey")
+  su $SEED2NEED_USER -c "$SEED2NEED_CLI -conf=$SEED2NEED_FOLDER/$CONFIG_FILE -datadir=$SEED2NEED_FOLDER stop"
 fi
 }
 
 function update_config() {
-  sed -i 's/daemon=1/daemon=0/' $CIRCUIT_FOLDER/$CONFIG_FILE
-  cat << EOF >> $CIRCUIT_FOLDER/$CONFIG_FILE
+  sed -i 's/daemon=1/daemon=0/' $SEED2NEED_FOLDER/$CONFIG_FILE
+  cat << EOF >> $SEED2NEED_FOLDER/$CONFIG_FILE
 maxconnections=256
 masternode=1
-masternodeaddr=$NODE_IP:$CIRCUIT_PORT
-masternodeprivkey=$CIRCUIT_KEY
+masternodeaddr=$NODE_IP:$SEED2NEED_PORT
+masternodeprivkey=$SEED2NEED_KEY
 EOF
-  chown -R $CIRCUIT_USER: $CIRCUIT_FOLDER >/dev/null
+  chown -R $SEED2NEED_USER: $SEED2NEED_FOLDER >/dev/null
 }
 
 function important_information() {
  echo
  echo -e "================================================================================================================================"
- echo -e "Circuit Masternode is up and running as user ${GREEN}$CIRCUIT_USER${NC} and it is listening on port ${GREEN}$CIRCUIT_PORT${NC}."
- echo -e "${GREEN}$CIRCUIT_USER${NC} password is ${RED}$USERPASS${NC}"
- echo -e "Configuration file is: ${RED}$CIRCUIT_FOLDER/$CONFIG_FILE${NC}"
- echo -e "Start: ${RED}systemctl start $CIRCUIT_USER.service${NC}"
- echo -e "Stop: ${RED}systemctl stop $CIRCUIT_USER.service${NC}"
- echo -e "VPS_IP:PORT ${RED}$NODE_IP:$CIRCUIT_PORT${NC}"
- echo -e "MASTERNODE PRIVATEKEY is: ${RED}$CIRCUIT_KEY${NC}"
- echo -e "Please check Circuit is running with the following command: ${GREEN}systemctl status $CIRCUIT_USER.service${NC}"
+ echo -e "Seed2need Masternode is up and running as user ${GREEN}$SEED2NEED_USER${NC} and it is listening on port ${GREEN}$SEED2NEED_PORT${NC}."
+ echo -e "${GREEN}$SEED2NEED_USER${NC} password is ${RED}$USERPASS${NC}"
+ echo -e "Configuration file is: ${RED}$SEED2NEED_FOLDER/$CONFIG_FILE${NC}"
+ echo -e "Start: ${RED}systemctl start $SEED2NEED_USER.service${NC}"
+ echo -e "Stop: ${RED}systemctl stop $SEED2NEED_USER.service${NC}"
+ echo -e "VPS_IP:PORT ${RED}$NODE_IP:$SEED2NEED_PORT${NC}"
+ echo -e "MASTERNODE PRIVATEKEY is: ${RED}$SEED2NEED_KEY${NC}"
+ echo -e "Please check Seed2need is running with the following command: ${GREEN}systemctl status $SEED2NEED_USER.service${NC}"
  echo -e "================================================================================================================================"
 }
 
@@ -344,7 +329,7 @@ function setup_node() {
   update_config
   enable_firewall
   download_bootstrap
-  systemd_circuit
+  systemd_seed2need
   important_information
 }
 
@@ -354,5 +339,5 @@ clear
 purgeOldInstallation
 checks
 prepare_system
-install_circuit
+install_seed2need
 setup_node
