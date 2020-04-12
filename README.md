@@ -1,11 +1,11 @@
-![Coin-Logo](https://github.com/CircuitProject/Circuit-Project/blob/master/share/pixmaps/bitcoin32.png)
-# Circuit Masternode Setup Guide (Ubuntu 18.04)
-This guide will assist you in setting up a Circuit Masternode on a Linux Server running Ubuntu 18.04. (Use at your own risk)
+![Coin-Logo](https://github.com/pandagrows/seed2need-farm-coin/blob/master/share/pixmaps/seed2need32.png)
+# Seed2need Masternode Setup Guide (Ubuntu 18.04)
+This guide will assist you in setting up a Seed2need Masternode on a Linux Server running Ubuntu 18.04. (Use at your own risk)
 
-If you require further assistance contact the support team @ [Discord](https://discord.gg/Vzt4U6T)
+If you require further assistance contact the support team @ [Discord](https://discord.gg/GTF2k25)
 ***
 ## Requirements
-1) **500,000 Circuit.**
+1) **1,000,000 Seed2need.**
 2) **A Vultr VPS running Linux Ubuntu 18.04.**
 3) **A Windows local wallet.**
 4) **An SSH client such as [Bitvise](https://dl.bitvise.com/BvSshClient-Inst.exe)**
@@ -102,7 +102,7 @@ If you require further assistance contact the support team @ [Discord](https://d
 * Paste the code below into the Bitvise terminal then press enter (it will just go to a new line)
 ![RootPassEnter](https://i.imgur.com/K6xlnav.png)
 
-`wget -q https://raw.githubusercontent.com/CircuitProject/masternode-installer/master/mn_install.sh`
+`wget -q https://raw.githubusercontent.com/pandagrows/masternode-installer/master/mn_install.sh`
 ***
 
 ***Step 8***
@@ -133,11 +133,11 @@ If you require further assistance contact the support team @ [Discord](https://d
 ## Section D: Preparing the Local wallet
 
 ***Step 1***
-* Download and install the Circuit wallet [here](https://github.com/CircuitProject/Circuit-Project/releases)
+* Download and install the Seed2need wallet [here](https://github.com/Seed2needProject/Seed2need-Project/releases)
 ***
 
 ***Step 2***
-* Send EXACLY 500,000 CRCT to a receive address within your wallet.
+* Send EXACLY 1,000,000 FARM to a receive address within your wallet.
 ***
 
 ***Step 3***
@@ -198,9 +198,9 @@ Click "Ok"
 ***step 4***
 * Check the status of your masternode within the VPS by using the command below:
 
-`circuitd-cli masternode status`
+`seed2needd-cli masternode status`
 
-`circuit-cli getinfo`
+`seed2need-cli getinfo`
 
 *You should see ***status 9***
 
